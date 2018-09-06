@@ -6,14 +6,17 @@ declare -i max=0
 declare -i tot=0
 
 while read p; do
+    #count lines
     count=$((${count}+1))
-    if [[ $((${count}%2)) -eq 0 ]] ; then
+    #only shows read
+    if [[ $((${count}%4)) -eq 2 ]] ; then
+        ## ESCAPE BACKSLASH
+        echo $p
         length=$(echo ${p} | wc -c)
         tot+=${length}
         if [[ ${min} -eq 0 ]] ; then
             min=$length
             max=$length
-            echo ${min}
         else
             if [[ $min -gt $length ]] ; then
                 min=$length
@@ -22,13 +25,11 @@ while read p; do
                 max=$length
             fi
         fi
-        # echo ${count}
-        # echo $p
+        ## CALC GC
+        ## CALC GC PER POSITION
     fi
-    # echo $p
-    # echo $p | wc -c
-done < testbestand1.fastq
+done < testbestand2.fastq
 
-echo $min
-echo $max
-echo $((${tot}/(${count}/2)))
+echo "min: " $min
+echo "max: " $max
+echo "Avg: " $((${tot}/(${count}/4)))
