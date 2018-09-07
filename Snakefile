@@ -5,4 +5,4 @@ rule qc:
     output:
         "qc_output/test.qc"
     shell:
-        'bash opdr1.sh {input} > {output}'
+        'bash qc.sh {input} > {output}'
