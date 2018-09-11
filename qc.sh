@@ -6,13 +6,13 @@ declare -i max=0
 declare -i tot=0
 
 for file in "$@"; do
-    while read p; do
+    while read -r p; do
         #count lines
         count=$((${count}+1))
         #only shows read
         if [[ $((${count}%4)) -eq 2 ]] ; then
             ## ESCAPE BACKSLASH
-            echo $p
+            echo ${p}
             length=$(echo ${p} | wc -c)
             tot+=${length}
             if [[ ${min} -eq 0 ]] ; then
