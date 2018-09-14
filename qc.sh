@@ -10,7 +10,7 @@ declare -a consensusC
 declare -a consensusG
 declare -a consensusT
 
-declare -a GCtoAT
+declare -i GC
 
 for file in "$@"; do
     while read -r p; do
@@ -37,8 +37,7 @@ for file in "$@"; do
             ## CALC GC PER POSITION
             # if [[ ((${count} -eq 2 )) ]] ; then
 
-                GCtoAT[0]=0
-                GCtoAT[1]=0
+                GC=0
                 for (( i=0; i<${#p}; i++ )); do
                     nucl="${p:$i:1}"
                     consensusA+=(0)
@@ -46,15 +45,15 @@ for file in "$@"; do
                     consensusG+=(0)
                     consensusT+=(0)
                     if [ ${nucl} == "G" ] || [ ${nucl} == "C" ] ; then
-                        (( GCtoAT[0]++ ))
-                        # echo "${nucl} ${GCtoAT[0]}"
-                        # $(( GCtoAT[0]++ ))
-                    elif [ ${nucl} == "A" ] || [ ${nucl} == "T" ] ; then
+                        (( GC++ ))
+                        # echo "${nucl} ${GC[0]}"
+                        # $(( GC[0]++ ))
+                    # elif [ ${nucl} == "A" ] || [ ${nucl} == "T" ] ; then
                         # echo "AT"
-                        (( GCtoAT[1]++ ))
+                        # (( GC[1]++ ))
                     fi
                 done
-                echo "GC: "$(( (${GCtoAT[0]}*100)/${length} ))% ${p}
+                echo "GC: "$(( (${GC}*100)/${length} ))% ${p}
             # fi
         fi
     done < $file
