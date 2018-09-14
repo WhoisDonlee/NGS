@@ -54,7 +54,7 @@ for file in "$@"; do
                         (( GCtoAT[1]++ ))
                     fi
                 done
-                echo "GC: "$(( (${GCtoAT[0]}*${length})/${GCtoAT[1]} ))% ${p}
+                echo "GC: "$(( (${GCtoAT[0]}*100)/${length} ))% ${p}
             # fi
         fi
     done < $file
