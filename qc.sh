@@ -35,25 +35,41 @@ for file in "$@"; do
             fi
             ## CALC GC
             ## CALC GC PER POSITION
-            # if [[ ((${count} -eq 2 )) ]] ; then
 
-                GC=0
-                for (( i=0; i<${#p}; i++ )); do
-                    nucl="${p:$i:1}"
+            GC=0
+            for (( i=0; i<${#p}; i++ )); do
+                if [[ ((${count} -eq 2 )) ]] ; then
                     consensusA+=(0)
                     consensusC+=(0)
                     consensusG+=(0)
                     consensusT+=(0)
-                    if [ ${nucl} == "G" ] || [ ${nucl} == "C" ] ; then
-                        (( GC++ ))
-                        # echo "${nucl} ${GC[0]}"
-                        # $(( GC[0]++ ))
-                    # elif [ ${nucl} == "A" ] || [ ${nucl} == "T" ] ; then
-                        # echo "AT"
-                        # (( GC[1]++ ))
-                    fi
-                done
-                echo "GC: "$(( (${GC}*100)/${length} ))% ${p}
+                fi
+                nucl="${p:$i:1}"
+                if [ ${nucl} == "G" ] || [ ${nucl} == "C" ] ; then
+                    (( GC++ ))
+
+                    # echo "${nucl} ${GC[0]}"
+                    # $(( GC[0]++ ))
+                # elif [ ${nucl} == "A" ] || [ ${nucl} == "T" ] ; then
+                    # echo "AT"
+                    # (( GC[1]++ ))
+                fi
+                case "${nucl}" in
+                "A")
+                    (( consensusA[${i}]++ ))
+                    ;;
+                "C")
+                    (( consensusC[${i}]++ ))
+                    ;;
+                "G")
+                    (( consensusG[${i}]++ ))
+                    ;;
+                "T")
+                    (( consensusT[${i}]++ ))
+                    ;;
+                esac
+            done
+            echo "GC: "$(( (${GC}*100)/${length} ))% ${p}
             # fi
         fi
     done < $file
@@ -62,4 +78,8 @@ echo "min: " $min
 echo "max: " $max
 echo "Avg: " $((${tot}/(${count}/4)))
 echo $file
+echo "A: "${consensusA[@]}
+echo "C: "${consensusC[@]}
+echo "G: "${consensusG[@]}
+echo "T: "${consensusT[@]}
 done
