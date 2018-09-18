@@ -1,5 +1,4 @@
 #!/bin/bash
-
 declare -i count=0
 declare -i min=0
 declare -i max=0
@@ -13,6 +12,10 @@ declare -a consensusT
 declare -i GC
 
 for file in "$@"; do
+    consensusA=()
+    consensusC=()
+    consensusG=()
+    consensusT=()
     while read -r p; do
         #count lines
         count=$((${count}+1))
@@ -69,17 +72,21 @@ for file in "$@"; do
                     ;;
                 esac
             done
-            echo "GC: "$(( (${GC}*100)/${length} ))% ${p}
+            # printf "%s %s %s\n" "GC: "$(( (${GC}*100)/${length} )) "${p}"
             # fi
         fi
     done < $file
 
-echo "min: " $min
-echo "max: " $max
-echo "Avg: " $((${tot}/(${count}/4)))
-echo $file
-echo "A: "${consensusA[@]}
-echo "C: "${consensusC[@]}
-echo "G: "${consensusG[@]}
-echo "T: "${consensusT[@]}
+    printf "Min: %s\n" $min
+    printf "Max: %s\n" $max
+    printf "Avg: %s\n" $((${tot}/(${count}/4)))
+    printf "GC: "
+    for (( i=0; i<${#consensusA[@]}; i++ )) ; do
+        gc=$(( ${consensusC[$i]}+${consensusG[$i]} ))
+        tot=$(( ${consensusA[$i]}+${consensusT[$i]}+$gc ))
+        if [[ ${gc} -ne 0 ]] ; then
+            printf "%s%s\t" $(( (${gc}*100)/${tot} )) "%"
+        fi
+    done
+    printf "\n"
 done
