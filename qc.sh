@@ -3,15 +3,21 @@ declare -i count=0
 declare -i min=0
 declare -i max=0
 declare -i tot=0
+declare -i GC
 
 declare -a consensusA
 declare -a consensusC
 declare -a consensusG
 declare -a consensusT
 
-declare -i GC
 
 for file in "$@"; do
+    # Reset variables
+    count=0
+    min=0
+    max=0
+    tot=0
+    GC=0
     consensusA=()
     consensusC=()
     consensusG=()
@@ -21,9 +27,8 @@ for file in "$@"; do
         count=$((${count}+1))
         #only shows read
         if [[ $((${count}%4)) -eq 2 ]] ; then
-
             # echo ${p}
-            length=$(echo ${p} | wc -c)
+            length=$(printf ${p} | wc -c)
             tot+=${length}
             if [[ ${min} -eq 0 ]] ; then
                 min=$length
@@ -72,7 +77,7 @@ for file in "$@"; do
                     ;;
                 esac
             done
-            # printf "%s %s %s\n" "GC: "$(( (${GC}*100)/${length} )) "${p}"
+            printf "%s %s\t%s\n" "GC:" "$(( (${GC}*100)/${length} ))%" "${p}"
             # fi
         fi
     done < $file
