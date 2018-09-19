@@ -2,3 +2,4 @@
 .snakemake/*
 reads/*
 qc_output/*
+trim_output/*
