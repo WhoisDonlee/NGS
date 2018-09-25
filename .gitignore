@@ -1,4 +1,3 @@
-.vscode/*
 .snakemake/*
 qc_output/*
 trim_output/*
