@@ -14,4 +14,4 @@ rule trim:
     output:
         "trim_output/test.trim"
     shell:
-        'bash trim.sh {input} > {output}'
+        './trim {input} > {output}'
