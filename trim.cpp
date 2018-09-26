@@ -3,31 +3,26 @@
 
 using namespace std;
 
-int main(int argc, char **argv) {
-    // loops through command line arguments (filenames)
-    for(int i = 1; i < argc; i++)
+int main(int argc, char **argv)
+{
+
+    ifstream file1(argv[1]), file2(argv[2]);
+    string line1, line2;
+
+    int i = 0;
+
+    while (!file1.eof())
     {
-        int count = 0;
+        getline(file1, line1);
+        getline(file2, line2);
 
-        ifstream ifile(argv[i]);
-        string line;
+        if (line1 == "")
+            continue;
 
-        // loops through file lines
-        while(ifile >> line) {
-            if (count==4) {
-                count = 0;
-            }
-                cout << line[0] << count << endl;
+        i++;
 
-            // cout << line << endl;
-            count++;
-        }
-        cout << argv[i] << endl;
-
-        int num = '!';
-        cout << num;
+        cout << "   " << line1 << endl;
+        cout << "   " << line2 << endl;
     }
-
-    
-    
+    return 0;
 }
