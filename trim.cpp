@@ -4,43 +4,77 @@
 
 using namespace std;
 
+class Trimmer {
+private:
+    string name;
+    string seq;
+    string ascii;
+    vector<int> qscore;
+
+    string line;
+
+public:
+    ifstream file;
+    Trimmer(string filename) {
+        this->file = ifstream(filename);        
+    }
+    
+    void getNextLine() {
+        getline(this->file, line);
+    }
+
+    string getName() {
+        return this->name;
+    }
+    void setName(string name){
+        this->name = name;
+    }
+
+    string getSeq(){
+        return this->seq;
+    }
+    void setSeq(string seq){
+        this->seq = seq;
+    }
+    string getLine() {
+        return this->line;
+    }
+};
+
 int main(int argc, char **argv)
 {
-
-    ifstream file1(argv[1]), file2(argv[2]);
-    string line1, line2;
+    Trimmer trimobj1(argv[1]);
+    Trimmer trimobj2(argv[2]);
 
     int count = 0;
 
-    string name1, name2;
-    string seq1, seq2;
-    vector<int> qscore1, qscore2;
-
-    while (!file1.eof())
+    while (!trimobj1.file.eof())
     {
-        getline(file1, line1);
-        getline(file2, line2);
+        trimobj1.getNextLine();
+        trimobj2.getNextLine();
 
-        if (line1 == "")
+        if (trimobj1.getLine() == "")
             continue;
 
         switch (count)
         {
         case 0:
-            name1 = line1, name2 = line2;
+            trimobj1.setName(trimobj1.getLine());
+            trimobj2.setName(trimobj2.getLine());
             break;
         case 1:
-            seq1 = line1, seq2 = line2;
+            trimobj1.setSeq(trimobj1.getLine());
+            trimobj2.setSeq(trimobj2.getLine());
             break;
         case 2:
             break;
         case 3:
-            qscore1.push_back(count);
-            qscore2.push_back(count);
-            cout << name1 << endl
-                 << seq1 << endl;
-            cout << name2 << endl
-                 << seq2 << endl;
+        //     qscore1.push_back(count);
+        //     qscore2.push_back(count);
+            cout << trimobj1.getName() << endl
+                 << trimobj1.getSeq() << endl;
+            cout << trimobj2.getName() << endl
+                 << trimobj2.getSeq() << endl;
             break;
         default:
             break;
