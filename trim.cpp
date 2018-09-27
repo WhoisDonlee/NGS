@@ -6,6 +6,7 @@ using namespace std;
 
 class Trimmer {
 private:
+    int asciiBase = 64;
     string name;
     string seq;
     string ascii;
@@ -18,26 +19,22 @@ public:
     Trimmer(string filename) {
         this->file = ifstream(filename);        
     }
-    
-    void getNextLine() {
-        getline(this->file, line);
-    }
 
-    string getName() {
-        return this->name;
-    }
-    void setName(string name){
-        this->name = name;
-    }
+    void getNextLine() { getline(this->file, line); }
 
-    string getSeq(){
-        return this->seq;
-    }
-    void setSeq(string seq){
-        this->seq = seq;
-    }
-    string getLine() {
-        return this->line;
+    string getName() { return this->name; }
+    void setName(string name){ this->name = name; }
+
+    string getSeq(){ return this->seq; }
+    void setSeq(string seq){ this->seq = seq; }
+
+    string getLine() { return this->line; }
+
+    vector<int> calcQscores(string asciiArray) {
+        for (char& c : asciiArray) {
+            this->qscore.push_back((int)c-this->asciiBase);
+        }
+        return this->qscore;
     }
 };
 
@@ -69,16 +66,15 @@ int main(int argc, char **argv)
         case 2:
             break;
         case 3:
-        //     qscore1.push_back(count);
-        //     qscore2.push_back(count);
-            cout << trimobj1.getName() << endl
-                 << trimobj1.getSeq() << endl;
-            cout << trimobj2.getName() << endl
-                 << trimobj2.getSeq() << endl;
+            trimobj1.calcQscores(trimobj1.getLine());
+            trimobj2.calcQscores(trimobj2.getLine());
             break;
         default:
             break;
         }
+
+        cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
+        cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
 
         count < 3 ? count++ : count = 0;
     }
