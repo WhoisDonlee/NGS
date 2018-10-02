@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -13,6 +14,12 @@ private:
     vector<int> qscore;
 
     string line;
+
+    void calcQscores(string asciiArray) {
+        for (char& c : asciiArray) {
+            this->qscore.push_back((int)c-this->asciiBase);
+        }
+    }
 
 public:
     ifstream file;
@@ -30,11 +37,24 @@ public:
 
     string getLine() { return this->line; }
 
-    vector<int> calcQscores(string asciiArray) {
-        for (char& c : asciiArray) {
-            this->qscore.push_back((int)c-this->asciiBase);
-        }
-        return this->qscore;
+    vector<int> getQscore() { return this->qscore; }
+
+    void trim(string asciiArray) {
+        string trimmed;
+        int posStart, posEnd, windowsize=5, minscore=20, total=0, count=0;
+        deque<int> subQscore;
+        this->calcQscores(asciiArray);
+
+        for (int i : this->getQscore()) {
+            subQscore.push_back(i);
+            total += i;
+            if (subQscore.size() >= windowsize) {
+                total -= subQscore[0];
+                subQscore.pop_front();
+            }
+            count++;
+       }
+        // this->setSeq(trimmed); 
     }
 };
 
@@ -66,15 +86,14 @@ int main(int argc, char **argv)
         case 2:
             break;
         case 3:
-            trimobj1.calcQscores(trimobj1.getLine());
-            trimobj2.calcQscores(trimobj2.getLine());
+            trimobj1.trim(trimobj1.getLine());
+            trimobj2.trim(trimobj2.getLine());
+            cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
+            cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
             break;
         default:
             break;
         }
-
-        cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
-        cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
 
         count < 3 ? count++ : count = 0;
     }
