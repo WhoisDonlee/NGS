@@ -28,6 +28,9 @@ public:
     string getSeq(){ return this->seq; }
     void setSeq(string seq){ this->seq = seq; }
 
+    vector<int> getQscore() { return this->qscore; }
+    void clearQscore() { this->qscore.clear(); }
+
     string getLine() { return this->line; }
 
     vector<int> calcQscores(string asciiArray) {
@@ -68,13 +71,16 @@ int main(int argc, char **argv)
         case 3:
             trimobj1.calcQscores(trimobj1.getLine());
             trimobj2.calcQscores(trimobj2.getLine());
+            
+            cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
+            cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
+
+            trimobj1.clearQscore();
+            trimobj2.clearQscore();
             break;
         default:
             break;
         }
-
-        cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
-        cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
 
         count < 3 ? count++ : count = 0;
     }
