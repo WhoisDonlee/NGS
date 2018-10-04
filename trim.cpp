@@ -23,7 +23,7 @@ private:
     }
 
     int getQscoreAverage() {
-        int average;
+        int average=0;
         for (int i : this->getQscore()) {
             average += i;
         }
@@ -54,7 +54,7 @@ public:
         int posStart, posEnd, windowsize=5, minscore=20, total=0, count=0;
         deque<int> subQscore;
         this->calcQscores(asciiArray);
-        
+
         if(this->getQscoreAverage() < 20) {
             return false;
         }
