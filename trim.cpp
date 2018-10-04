@@ -16,6 +16,7 @@ private:
     string line;
 
     void calcQscores(string asciiArray) {
+        this->qscore.clear();
         for (char& c : asciiArray) {
             this->qscore.push_back((int)c-this->asciiBase);
         }
@@ -39,21 +40,34 @@ public:
 
     vector<int> getQscore() { return this->qscore; }
 
-    void trim(string asciiArray) {
+    bool trim(string asciiArray) {
         string trimmed;
         int posStart, posEnd, windowsize=5, minscore=20, total=0, count=0;
         deque<int> subQscore;
         this->calcQscores(asciiArray);
+        // TODO
+        // if(vectoraverage < 20) {
+        //     return false;
+        // }
 
         for (int i : this->getQscore()) {
             subQscore.push_back(i);
             total += i;
             if (subQscore.size() >= windowsize) {
+                if (total > (minscore*windowsize)) {
+                    trimmed = this->getSeq().substr(count-(windowsize-1));
+                    goto Return;
+                }
                 total -= subQscore[0];
                 subQscore.pop_front();
             }
             count++;
        }
+       Return:
+        if (trimmed.size() <= 30) {
+            return false;
+        }        
+        return true;
         // this->setSeq(trimmed); 
     }
 };
@@ -86,10 +100,15 @@ int main(int argc, char **argv)
         case 2:
             break;
         case 3:
-            trimobj1.trim(trimobj1.getLine());
-            trimobj2.trim(trimobj2.getLine());
-            cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
-            cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
+            if(trimobj1.trim(trimobj1.getLine()) && trimobj2.trim(trimobj2.getLine())) {
+                cout << "Both true" << endl;
+                cout << trimobj1.getName() << endl;
+                cout << trimobj2.getName() << endl;
+            }
+            // trimobj1.trim(trimobj1.getLine());
+            // trimobj2.trim(trimobj2.getLine());
+            // cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
+            // cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
             break;
         default:
             break;
