@@ -15,6 +15,12 @@ private:
 
     string line;
 
+    /**
+     * Calculates the Qscores acording to the ascii base table and puts them into vector<int> qscore
+     * 
+     * 
+     * @param asciiArray string with ascii symbols representing the qscore
+     **/
     void calcQscores(string asciiArray) {
         this->qscore.clear();
         for (char& c : asciiArray) {
@@ -22,6 +28,9 @@ private:
         }
     }
 
+    /**
+     * Calculates the average qscore of the qscore vector
+     **/
     int getQscoreAverage() {
         int average=0;
         for (int i : this->getQscore()) {
@@ -31,6 +40,14 @@ private:
         return average;
     }
 
+    /**
+     * Loops through the vector array with a sliding window
+     * Cuts off parts with too low Qscore
+     * 
+     * @param begin begin of fwd or rev iterator
+     * @param end   end of fwd or rev iterator
+     * @param rev   trims off the end of the sequence if input = "reverse"
+     **/
     template <typename Iterator>
     void trimLoop(Iterator begin, Iterator end, string rev = "forward") {
 
@@ -63,6 +80,12 @@ private:
 
 public:
     ifstream file;
+
+    /**
+     * Trimmer class constructor
+     * 
+     * @param filename  path to fastq file
+     **/
     Trimmer(string filename) {
         this->file = ifstream(filename);        
     }
@@ -79,6 +102,13 @@ public:
 
     vector<int> getQscore() { return this->qscore; }
 
+    /**
+     * main trim function
+     * Calls method to calculate qscore, creates fwd and rev iterators, calls trimLoop (fwd/rev)
+     * Checks if trimmed read size is high enough
+     * 
+     * @param asciiArray    ascii string used to calculate qscores in calcQscores(asciiArray)
+     **/
     bool trim(string asciiArray) {
         string trimmed;
         this->calcQscores(asciiArray);
