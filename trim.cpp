@@ -31,6 +31,36 @@ private:
         return average;
     }
 
+    template <typename Iterator>
+    void trimLoop(Iterator begin, Iterator end, string rev = "forward") {
+
+        int windowsize=5, minscore=20, total=0, count=0;
+        deque<int> subQscore;
+
+        for ( ; begin < end; begin++) {
+            subQscore.push_back(*begin);
+            total += *begin;
+            if (subQscore.size() >= windowsize) {
+                if (total > (minscore*windowsize)) {
+                    if(rev != "reverse") {
+                        cout << "pre:\t" << this->getSeq() << endl;
+                        this->setSeq(this->getSeq().substr(count-(windowsize-1)));
+                        cout << "done:\t" << this->getSeq() << endl;
+                    } else {
+                        cout << "pre:\t" << this->getSeq() << endl;
+                        this->setSeq(this->getSeq().substr(0, (this->getSeq().size()-count)+(windowsize-1)));
+                        cout << "done:\t" << this->getSeq() << endl;
+                    }
+                    break;
+                }
+                total -= subQscore[0];
+                subQscore.pop_front();
+            }
+            count++;
+        }
+        cout << endl;
+    }
+
 public:
     ifstream file;
     Trimmer(string filename) {
@@ -51,33 +81,26 @@ public:
 
     bool trim(string asciiArray) {
         string trimmed;
-        int posStart, posEnd, windowsize=5, minscore=20, total=0, count=0;
-        deque<int> subQscore;
         this->calcQscores(asciiArray);
 
-        if(this->getQscoreAverage() < 20) {
-            return false;
-        }
+        // if(this->getQscoreAverage() < 20) {
+        //     return false;
+        // }
 
-        for (int i : this->getQscore()) {
-            subQscore.push_back(i);
-            total += i;
-            if (subQscore.size() >= windowsize) {
-                if (total > (minscore*windowsize)) {
-                    trimmed = this->getSeq().substr(count-(windowsize-1));
-                    goto Return;
-                }
-                total -= subQscore[0];
-                subQscore.pop_front();
-            }
-            count++;
-       }
-       Return:
-        if (trimmed.size() <= 30) {
+        vector<int>::iterator it = this->getQscore().begin();
+        vector<int>::iterator ite = this->getQscore().end();
+        vector<int>::reverse_iterator rit = this->getQscore().rbegin();
+        vector<int>::reverse_iterator rite = this->getQscore().rend();
+
+        cout << this->getSeq() << endl;
+
+        trimLoop(it, ite);
+        trimLoop(rit, rite, "reverse");
+
+        if (this->getSeq().size() <= 30) {
             return false;
         }        
         return true;
-        // this->setSeq(trimmed); 
     }
 };
 
@@ -127,3 +150,38 @@ int main(int argc, char **argv)
     }
     return 0;
 }
+// Example program
+// #include <iostream>
+// #include <string>
+// #include <iterator>
+// #include <vector>
+
+// using namespace std;
+
+// template <typename Iterator>
+// void doStuff(Iterator begin, Iterator end) {
+//     for (begin; begin < end; begin++) {
+//         cout << *begin << endl;
+//     }
+// }
+
+// int main()
+// {
+//     vector<int> ar;
+//     for (int i = 1; i <=5; i++) {
+//         ar.push_back(i);   
+//     }
+    
+//     vector<int>::iterator ptr = ar.begin();
+//     vector<int>::iterator ptre = ar.end();
+
+//     vector<int>::reverse_iterator itr = ar.rbegin();
+//     vector<int>::reverse_iterator itre = ar.rend();
+
+//     doStuff(ptr, ptre);
+//     doStuff(itr, itre);
+
+    
+//     cout << endl;
+//     return 0;
+// }
