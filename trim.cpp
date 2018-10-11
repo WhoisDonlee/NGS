@@ -149,6 +149,8 @@ public:
 
 int main(int argc, char **argv)
 {
+    // Trimmer trimobj1(argv[1], argv[3]);
+    // Trimmer trimobj2(argv[2], argv[4]);
     Trimmer trimobj1(argv[1], "trim_output/test1.trim");
     Trimmer trimobj2(argv[2], "trim_output/test2.trim");
 
