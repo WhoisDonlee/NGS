@@ -9,6 +9,7 @@ class Trimmer {
 private:
     int asciiBase = 64;
     string name;
+    string name2;
     string seq;
     string ascii;
     vector<int> qscore;
@@ -21,9 +22,9 @@ private:
      * 
      * @param asciiArray string with ascii symbols representing the qscore
      **/
-    void calcQscores(string asciiArray) {
+    void calcQscores() {
         this->qscore.clear();
-        for (char& c : asciiArray) {
+        for (char& c : this->getAscii()) {
             this->qscore.push_back((int)c-this->asciiBase);
         }
     }
@@ -60,13 +61,9 @@ private:
             if (subQscore.size() >= windowsize) {
                 if (total > (minscore*windowsize)) {
                     if(rev != "reverse") {
-                        cout << "pre:\t" << this->getSeq() << endl;
                         this->setSeq(this->getSeq().substr(count-(windowsize-1)));
-                        cout << "done:\t" << this->getSeq() << endl;
                     } else {
-                        cout << "pre:\t" << this->getSeq() << endl;
                         this->setSeq(this->getSeq().substr(0, (this->getSeq().size()-count)+(windowsize-1)));
-                        cout << "done:\t" << this->getSeq() << endl;
                     }
                     break;
                 }
@@ -75,19 +72,21 @@ private:
             }
             count++;
         }
-        cout << endl;
+        // cout << endl;
     }
 
 public:
     ifstream file;
+    ofstream writeFile;
 
     /**
      * Trimmer class constructor
      * 
      * @param filename  path to fastq file
      **/
-    Trimmer(string filename) {
+    Trimmer(string filename, string writeFile) {
         this->file = ifstream(filename);        
+        this->writeFile = ofstream(writeFile);
     }
 
     void getNextLine() { getline(this->file, line); }
@@ -95,15 +94,19 @@ public:
     string getName() { return this->name; }
     void setName(string name){ this->name = name; }
 
+    string getName2() { return this->name2; }
+    void setName2(string name){ this->name2 = name; }
+
     string getSeq(){ return this->seq; }
     void setSeq(string seq){ this->seq = seq; }
+
+    string getAscii() { return this->ascii; }
+    void setAscii(string ascii){ this->ascii = ascii; }
 
     vector<int> getQscore() { return this->qscore; }
     void clearQscore() { this->qscore.clear(); }
 
     string getLine() { return this->line; }
-
-    vector<int> getQscore() { return this->qscore; }
 
     /**
      * main trim function
@@ -112,9 +115,9 @@ public:
      * 
      * @param asciiArray    ascii string used to calculate qscores in calcQscores(asciiArray)
      **/
-    bool trim(string asciiArray) {
+    bool trim() {
         string trimmed;
-        this->calcQscores(asciiArray);
+        this->calcQscores();
 
         // if(this->getQscoreAverage() < 20) {
         //     return false;
@@ -125,7 +128,7 @@ public:
         vector<int>::reverse_iterator rit = this->getQscore().rbegin();
         vector<int>::reverse_iterator rite = this->getQscore().rend();
 
-        cout << this->getSeq() << endl;
+        // cout << this->getSeq() << endl;
 
         trimLoop(it, ite);
         trimLoop(rit, rite, "reverse");
@@ -135,12 +138,19 @@ public:
         }        
         return true;
     }
+
+    void writeToFile() {
+        this->writeFile << this->getName() << endl;
+        this->writeFile << this->getSeq() << endl;
+        this->writeFile << this->getName2() << endl;
+        this->writeFile << this->getAscii() << endl;
+    }
 };
 
 int main(int argc, char **argv)
 {
-    Trimmer trimobj1(argv[1]);
-    Trimmer trimobj2(argv[2]);
+    Trimmer trimobj1(argv[1], "trim_output/test1.trim");
+    Trimmer trimobj2(argv[2], "trim_output/test2.trim");
 
     int count = 0;
 
@@ -163,17 +173,16 @@ int main(int argc, char **argv)
             trimobj2.setSeq(trimobj2.getLine());
             break;
         case 2:
+            trimobj1.setName2(trimobj1.getLine());
+            trimobj2.setName2(trimobj2.getLine());
             break;
         case 3:
-            if(trimobj1.trim(trimobj1.getLine()) && trimobj2.trim(trimobj2.getLine())) {
-                cout << "Both true" << endl;
-                cout << trimobj1.getName() << endl;
-                cout << trimobj2.getName() << endl;
+            trimobj1.setAscii(trimobj1.getLine());
+            trimobj2.setAscii(trimobj2.getLine());
+            if(trimobj1.trim() && trimobj2.trim()) {
+                trimobj1.writeToFile();
+                trimobj2.writeToFile();
             }
-            // trimobj1.trim(trimobj1.getLine());
-            // trimobj2.trim(trimobj2.getLine());
-            // cout << trimobj1.getName() << endl << trimobj1.getSeq() << endl;
-            // cout << trimobj2.getName() << endl << trimobj2.getSeq() << endl;
             break;
         default:
             break;
