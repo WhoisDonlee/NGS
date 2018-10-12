@@ -9,6 +9,7 @@
         "ostream": "cpp",
         "string_view": "cpp",
         "array": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "fstream": "cpp"
     }
 }
