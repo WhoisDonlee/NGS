@@ -15,4 +15,4 @@ rule trim:
         "trim_output/test1.trim",
         "trim_output/test2.trim"
     shell:
-        './trim {input} {output}'
+        './trim.out {input} {output}'
