@@ -1,7 +1,8 @@
 #include <deque>
 #include "trim.h"
 
-Trimmer::Trimmer(string filename, string writeFile) {
+Trimmer::Trimmer(string filename, string writeFile)
+{
     this->file = ifstream(filename);
     this->writeFile = ofstream(writeFile);
 }
@@ -20,7 +21,8 @@ void Trimmer::setAscii(string a) { this->ascii = a; }
 
 void Trimmer::getNextLine() { getline(this->file, line); }
 
-bool Trimmer::trim() {
+bool Trimmer::trim()
+{
     string trimmed;
     this->calcQscores();
 
@@ -32,13 +34,15 @@ bool Trimmer::trim() {
     this->trimLoop(it, ite);
     this->trimLoop(rit, rite, "reverse");
 
-    if (this->getSeq().size() <= 30) {
+    if (this->getSeq().empty())
+    {
         return false;
     }
     return true;
 }
 
-void Trimmer::writeToFile() {
+void Trimmer::writeToFile()
+{
     this->writeFile << this->getName() << endl;
     this->writeFile << this->getSeq() << endl;
     this->writeFile << this->getName2() << endl;
@@ -51,10 +55,12 @@ void Trimmer::writeToFile() {
  * 
  * @param asciiArray string with ascii symbols representing the qscore
  **/
-void Trimmer::calcQscores() {
+void Trimmer::calcQscores()
+{
     this->qscore.clear();
-    for (char& c : this->getAscii()) {
-        this->qscore.push_back((int)c-this->asciiBase);
+    for (char &c : this->getAscii())
+    {
+        this->qscore.push_back((int)c - this->asciiBase);
     }
 }
 
@@ -66,20 +72,29 @@ void Trimmer::calcQscores() {
  * @param end   end of fwd or rev iterator
  * @param rev   trims off the end of the sequence if input = "reverse"
  **/
-template <typename Iterator> 
-void Trimmer::trimLoop(Iterator begin, Iterator end, string rev) {
-    int windowsize=5, minscore=20, total=0, count=0;
+template <typename Iterator>
+void Trimmer::trimLoop(Iterator begin, Iterator end, string rev)
+{
+    int windowsize = 7, minscore = 33, total = 0, count = 0;
     deque<int> subQscore;
+    string tempSeq = this->getSeq();
+    this->setSeq("");
 
-    for ( ; begin < end; begin++) {
+    for (; begin < end; begin++)
+    {
         subQscore.push_back(*begin);
         total += *begin;
-        if (subQscore.size() >= windowsize) {
-            if (total > (minscore*windowsize)) {
-                if (rev != "reverse") {
-                    this->setSeq(this->getSeq().substr(count-(windowsize-1)));
-                } else {
-                    this->setSeq(this->getSeq().substr(0, (this->getSeq().size()-count)+(windowsize-1)));
+        if (subQscore.size() >= windowsize)
+        {
+            if (total > (minscore * windowsize))
+            {
+                if (rev != "reverse")
+                {
+                    this->setSeq(tempSeq.substr(count - (windowsize - 1)));
+                }
+                else
+                {
+                    this->setSeq(tempSeq.substr(0, (tempSeq.size() - count) + (windowsize - 1)));
                 }
                 break;
             }
