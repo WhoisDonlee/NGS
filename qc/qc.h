@@ -1,6 +1,7 @@
 #ifndef QC_H
 #define QC_H
 
+#include <iostream>
 #include <fstream>
 #include <vector>
 
@@ -15,7 +16,6 @@ private:
 
   ofstream writeFile;
 
-  int calcGC();
   void addToConsensus();
 
 public:
@@ -29,6 +29,7 @@ public:
   int getMax();
   int getAvg();
   int getGC();
+  vector<int> getConsensus();
 
   void setSeq(string s);
   void setMin(int m);
@@ -38,6 +39,8 @@ public:
 
   void getNextLine();
   void writeToFile();
+
+  int calcGC();
 };
 
 #endif // QC_H
