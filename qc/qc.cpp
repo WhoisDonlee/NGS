@@ -11,9 +11,10 @@ QualityControl::QualityControl(string filename, string writeFile)
 string QualityControl::getLine() const { return this->line; };
 string QualityControl::getSeq() { return this->seq; };
 int QualityControl::getMin() { return this->min; };
-int QualityControl::getAvg() { return this->max; };
-int QualityControl::getMax() { return this->avg; };
+int QualityControl::getMax() { return this->max; };
+int QualityControl::getAvg() { return this->avg; };
 int QualityControl::getGC() { return this->GC; };
+int QualityControl::getTotalLength() { return this->totalLength; };
 vector<int> QualityControl::getConsensus() { return this->consensusGC; }
 
 void QualityControl::setSeq(string s) { this->seq = s; };
@@ -21,6 +22,7 @@ void QualityControl::setMin(int m) { this->min = m; };
 void QualityControl::setMax(int m) { this->max = m; };
 void QualityControl::setAvg(int a) { this->avg = a; };
 void QualityControl::setGC(int gc) { this->GC = gc; };
+void QualityControl::addTotalLength(int t) { this->totalLength += t; };
 
 void QualityControl::getNextLine() { getline(this->file, line); };
 void QualityControl::writeToFile()

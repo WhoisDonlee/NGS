@@ -11,7 +11,11 @@ class QualityControl
 {
 private:
   string seq, line;
-  int GC, min, max, avg;
+  int GC;
+  int min = 0;
+  int max = 0;
+  int avg = 0;
+  int totalLength = 0;
   vector<int> consensusGC;
 
   ofstream writeFile;
@@ -29,6 +33,7 @@ public:
   int getMax();
   int getAvg();
   int getGC();
+  int getTotalLength();
   vector<int> getConsensus();
 
   void setSeq(string s);
@@ -36,6 +41,7 @@ public:
   void setMax(int m);
   void setAvg(int a);
   void setGC(int gc);
+  void addTotalLength(int t);
 
   void getNextLine();
   void writeToFile();

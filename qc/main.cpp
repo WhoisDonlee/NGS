@@ -17,6 +17,7 @@ int main(int argc, char **argv)
 void loopFile(QualityControl &qc)
 {
     int count = 0;
+    int total = 0;
     while (!qc.file.eof())
     {
         qc.getNextLine();
@@ -29,8 +30,17 @@ void loopFile(QualityControl &qc)
         case 1:
             qc.setSeq(qc.getLine());
             cout << qc.calcGC() << "%:\t" << qc.getSeq() << endl;
-            // qc.getGC();
-            // cout << qc.getSeq();
+            cout << qc.getSeq().length() << " : " << qc.getMax() << endl;
+            if (qc.getSeq().length() > qc.getMax())
+            {
+                qc.setMax(qc.getSeq().length());
+            }
+            else if ((qc.getSeq().length() < qc.getMin()) || (qc.getMin() == 0))
+            {
+                qc.setMin(qc.getSeq().length());
+            }
+            qc.addTotalLength(qc.getSeq().length());
+            total++;
 
             break;
         default:
@@ -38,10 +48,15 @@ void loopFile(QualityControl &qc)
         }
         count < 3 ? count++ : count = 0;
     }
+
+    cout << "Min: " << qc.getMin() << endl;
+    cout << "Max: " << qc.getMax() << endl;
+    cout << "Avg: " << qc.getTotalLength() / total << endl;
+    cout << "GC% per position: " << endl;
     for (int i : qc.getConsensus())
     {
-        cout << i << " ";
-    }
+        cout << 100 * i / total << "%\t";
+    };
     cout << endl;
 }
 /**
