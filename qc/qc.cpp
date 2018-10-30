@@ -25,9 +25,9 @@ void QualityControl::setGC(int gc) { this->GC = gc; };
 void QualityControl::addTotalLength(int t) { this->totalLength += t; };
 
 void QualityControl::getNextLine() { getline(this->file, line); };
-void QualityControl::writeToFile()
+void QualityControl::writeToFile(string line)
 {
-    this->writeFile << this->getGC() << ": " << this->getSeq() << endl;
+    this->writeFile << line << endl;
 };
 
 int QualityControl::calcGC()

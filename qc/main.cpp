@@ -5,8 +5,10 @@ void loopFile(QualityControl &qc);
 
 int main(int argc, char **argv)
 {
-    QualityControl qc1(argv[1], "qc_output/file1.qc");
-    QualityControl qc2(argv[2], "qc_output/file2.qc");
+    QualityControl qc1(argv[1], "out_testbestand1.qc");
+    QualityControl qc2(argv[2], "out_testbestand2.qc");
+    // QualityControl qc1(argv[1], argv[3]);
+    // QualityControl qc2(argv[2], argv[4]);
 
     loopFile(qc1);
     loopFile(qc2);
@@ -29,8 +31,7 @@ void loopFile(QualityControl &qc)
         {
         case 1:
             qc.setSeq(qc.getLine());
-            cout << qc.calcGC() << "%:\t" << qc.getSeq() << endl;
-            cout << qc.getSeq().length() << " : " << qc.getMax() << endl;
+            qc.writeToFile(to_string(qc.calcGC()) + "%:\t" + qc.getSeq());
             if (qc.getSeq().length() > qc.getMax())
             {
                 qc.setMax(qc.getSeq().length());
@@ -49,22 +50,14 @@ void loopFile(QualityControl &qc)
         count < 3 ? count++ : count = 0;
     }
 
-    cout << "Min: " << qc.getMin() << endl;
-    cout << "Max: " << qc.getMax() << endl;
-    cout << "Avg: " << qc.getTotalLength() / total << endl;
-    cout << "GC% per position: " << endl;
+    qc.writeToFile("Min: " + to_string(qc.getMin()));
+    qc.writeToFile("Max: " + to_string(qc.getMax()));
+    qc.writeToFile("Avg: " + to_string(qc.getTotalLength() / total));
+    qc.writeToFile("GC% per position:");
+    string consensus;
     for (int i : qc.getConsensus())
     {
-        cout << 100 * i / total << "%\t";
+        consensus += to_string(100 * i / total) + "%\t";
     };
-    cout << endl;
+    qc.writeToFile(consensus);
 }
-/**
- * open file
- * read per line
- *  calc GC
- *  add consensus
- * Min
- * Max
- * Avg 
- **/

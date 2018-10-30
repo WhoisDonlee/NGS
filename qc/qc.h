@@ -44,7 +44,7 @@ public:
   void addTotalLength(int t);
 
   void getNextLine();
-  void writeToFile();
+  void writeToFile(string line);
 
   int calcGC();
 };

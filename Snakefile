@@ -3,16 +3,17 @@ rule qc:
         "reads/testbestand1.fastq",
         "reads/testbestand2.fastq"
     output:
-        "qc_output/test.qc"
+        "output_qc/test1.qc",
+        "output_qc/test2.qc"
     shell:
-        'bash qc.sh {input} > {output}'
+        './qc.out {input} {output}'
 
 rule trim:
     input:
         "reads/testbestand1.fastq",
         "reads/testbestand2.fastq"
     output:
-        "trim_output/test1.trim",
-        "trim_output/test2.trim"
+        "output_trim/test1.trim",
+        "output_trim/test2.trim"
     shell:
         './trim.out {input} {output}'
