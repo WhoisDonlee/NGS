@@ -91,10 +91,12 @@ void Trimmer::trimLoop(Iterator begin, Iterator end, string rev)
                 if (rev != "reverse")
                 {
                     this->setSeq(tempSeq.substr(count - (windowsize - 1)));
+                    this->setAscii(this->getAscii().substr(count - (windowsize - 1)));
                 }
                 else
                 {
                     this->setSeq(tempSeq.substr(0, (tempSeq.size() - count) + (windowsize - 1)));
+                    this->setAscii(this->getAscii().substr(0, (this->getAscii().size() - count) + (windowsize - 1)));
                 }
                 break;
             }
