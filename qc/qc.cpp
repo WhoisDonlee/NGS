@@ -36,7 +36,7 @@ int QualityControl::calcGC()
     int GC = 0;
     for (i; i < this->getSeq().length(); i++)
     {
-        if (consensusGC.empty())
+        if (consensusGC.empty() || consensusGC.size() < this->getSeq().length())
         {
             int size = this->getSeq().length();
             consensusGC.resize(size);
