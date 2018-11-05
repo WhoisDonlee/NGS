@@ -3,10 +3,10 @@
 
 int main(int argc, char **argv)
 {
-    // Trimmer trimobj1(argv[1], argv[3]);
-    // Trimmer trimobj2(argv[2], argv[4]);
-    Trimmer trimobj1(argv[1], "out_testbestand1trim.fastq");
-    Trimmer trimobj2(argv[2], "out_testbestand2trim.fastq");
+    Trimmer trimobj1(argv[1], argv[3]);
+    Trimmer trimobj2(argv[2], argv[4]);
+    // Trimmer trimobj1(argv[1], "out_testbestand1trim.fastq");
+    // Trimmer trimobj2(argv[2], "out_testbestand2trim.fastq");
 
     int count = 0;
 

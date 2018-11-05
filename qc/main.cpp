@@ -5,10 +5,10 @@ void loopFile(QualityControl &qc);
 
 int main(int argc, char **argv)
 {
-    QualityControl qc1(argv[1], "out_testbestand1.qc");
-    QualityControl qc2(argv[2], "out_testbestand2.qc");
-    // QualityControl qc1(argv[1], argv[3]);
-    // QualityControl qc2(argv[2], argv[4]);
+    // QualityControl qc1(argv[1], "out_testbestand1.qc");
+    // QualityControl qc2(argv[2], "out_testbestand2.qc");
+    QualityControl qc1(argv[1], argv[3]);
+    QualityControl qc2(argv[2], argv[4]);
 
     loopFile(qc1);
     loopFile(qc2);
