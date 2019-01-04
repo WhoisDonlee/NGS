@@ -5,10 +5,10 @@ void loopFile(QualityControl &qc);
 
 int main(int argc, char **argv)
 {
-    // QualityControl qc1(argv[1], "out_testbestand1.qc");
-    // QualityControl qc2(argv[2], "out_testbestand2.qc");
-    QualityControl qc1(argv[1], argv[3]);
-    QualityControl qc2(argv[2], argv[4]);
+    QualityControl qc1(argv[1], "out_testbestand1.qc");
+    QualityControl qc2(argv[2], "out_testbestand2.qc");
+    // QualityControl qc1(argv[1], argv[3]);
+    // QualityControl qc2(argv[2], argv[4]);
 
     loopFile(qc1);
     loopFile(qc2);
@@ -19,10 +19,15 @@ int main(int argc, char **argv)
 void loopFile(QualityControl &qc)
 {
     int count = 0;
+    int count2 = 0;
     int total = 0;
     while (!qc.file.eof())
     {
+        cout << count2 << endl;
         qc.getNextLine();
+
+        if (count2 == 1000)
+            cout << "KEK" << endl;
 
         if (qc.getLine() == "")
             continue;
@@ -30,7 +35,10 @@ void loopFile(QualityControl &qc)
         switch (count)
         {
         case 1:
+            count2++;
             qc.setSeq(qc.getLine());
+            cout << qc.getSeq() << endl;
+
             qc.writeToFile(to_string(qc.calcGC()) + "%:\t" + qc.getSeq());
             if (qc.getSeq().length() > qc.getMax())
             {
@@ -57,6 +65,7 @@ void loopFile(QualityControl &qc)
     string consensus;
     for (int i : qc.getConsensus())
     {
+        cout << i << endl;
         consensus += to_string(100 * i / total) + "%\t";
     };
     qc.writeToFile(consensus);
