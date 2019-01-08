@@ -37,14 +37,15 @@
       "request": "launch",
       "program": "${fileDirname}.out",
       "args": [
-        "${workspaceFolder}/output_trim/trimmed*",
-        "${workspaceFolder}/output_qc/trimmed1.qc",
-        "${workspaceFolder}/output_qc/trimmed2.qc"
+        "${workspaceFolder}/reads/bngsa*.fastq"
+        // "${workspaceFolder}/output_trim/trimmed*",
+        // "${workspaceFolder}/output_qc/trimmed1.qc",
+        // "${workspaceFolder}/output_qc/trimmed2.qc"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
-      "externalConsole": true,
+      "externalConsole": false,
       "MIMode": "gdb",
       "miDebuggerPath": "/usr/bin/gdb",
       "setupCommands": [

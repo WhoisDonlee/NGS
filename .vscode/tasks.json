@@ -1,45 +1,36 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "echo",
-            "type": "shell",
-            "command": "snakemake -F trim",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "build & debug file",
-            "type": "shell",
-            "command": "g++",
-            "args": [
-              "-g",
-              "-o",
-              "${fileDirname}.out",
-              "${fileDirname}/*"
-            ],
-            "group": {
-              "kind": "build",
-              "isDefault": true
-            }
-          },
-          {
-            "label": "build & run file",
-            "type": "shell",
-            "command": "g++",
-            "args": [
-              "-o",
-              "${fileDirname}.out",
-              "${fileDirname}/*"
-            ],
-            "group": {
-              "kind": "build",
-              "isDefault": true
-            }
-          }
-    ]
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "echo",
+      "type": "shell",
+      "command": "snakemake -F trim",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build & debug file",
+      "type": "shell",
+      "command": "g++",
+      "args": ["-g", "-o", "${fileDirname}.out", "${fileDirname}/*"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build & run file",
+      "type": "shell",
+      "command": "g++",
+      "args": ["-o", "${fileDirname}.out", "${fileDirname}/*"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
 }
