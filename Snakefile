@@ -1,65 +1,148 @@
+SAMPLES = ['bngsa_nietinfected']
+
+import os
+
+docstring= r"""
+    Dit is de BNEXTGEN Pipeline.
+    """
+
+if 'help' in config:
+    print(docstring)
+    os._exit(0)
+
 rule all:
     input:
-        "output_qc/untrimmed1.qc",
-        "output_qc/untrimmed2.qc",
-        "output_qc/trimmed1.qc",
-        "output_qc/trimmed2.qc"
+        expand('out_qc/{sample}_qc_1.fastq', sample=SAMPLES),
+        expand('out_qc/{sample}_qc_2.fastq', sample=SAMPLES),
+        expand('out_qc/{sample}_qctrimmed_1.fastq', sample=SAMPLES),
+        expand('out_qc/{sample}_qctrimmed_2.fastq', sample=SAMPLES),
+        expand('out_bowtie/{sample}.sorted.bam.bai', sample=SAMPLES),
+        expand('refgen/infected_consensus.fasta.fai'),
+        expand('out_bowtie/{sample}.bcf', sample=SAMPLES),
+        expand('output/{sample}_consensus.fastq', sample=SAMPLES),
 
-rule qc:
-    input:
-        "reads/testbestand1.fastq",
-        "reads/testbestand2.fastq"
-    output:
-        "output_qc/untrimmed1.qc",
-        "output_qc/untrimmed2.qc"
-    shell:
-        './qc.out {input} {output}'
+#rule symlink:
+#    input:
+#        genome = '/home/bnextgen/refgenome/infected_consensus.fasta',
+#        #r1 = '/home/bnextgen/reads/{sample}_1.fastq',
+#        #r2 = '/home/bnextgen/reads/{sample}_2.fastq'
+#    output:
+#        genome = 'refgen/infected_consensus.fasta',
+#        #r1 = 'reads/{sample}_1.fastq',
+#        #r2 = 'reads/{sample}_2.fastq',
+#    run:
+#        for i in range(len(input)):
+#            os.system('ln -s '+input[i]+' '+output[i])
 
 rule trim:
     input:
-        "reads/testbestand1.fastq",
-        "reads/testbestand2.fastq"
+        r1 = '/home/bnextgen/reads/{sample}_1.fastq',
+        r2 = '/home/bnextgen/reads/{sample}_2.fastq'
     output:
-        "output_trim/trimmed1.fastq",
-        "output_trim/trimmed2.fastq"
+        r1 = 'out_trim/{sample}_trimmed_1.fastq',
+        r2 = 'out_trim/{sample}_trimmed_2.fastq'
     shell:
         './trim.out {input} {output}'
 
-rule qctrimmed:
+rule qc:
     input:
-        "output_trim/trimmed1.fastq",
-        "output_trim/trimmed2.fastq"
+        rules.trim.input
+        #r1 = '/home/bnextgen/reads/{sample}_1.fastq',
+        #r2 = '/home/bnextgen/reads/{sample}_2.fastq'
     output:
-        "output_qc/trimmed1.qc",
-        "output_qc/trimmed2.qc"
+        r1 = 'out_qc/{sample}_qc_1.fastq', 
+        r2 = 'out_qc/{sample}_qc_2.fastq'
     shell:
         './qc.out {input} {output}'
 
-rule bowtie2build:
-	input: 
-		"/home/bnextgen/refgenome/infected_consensus.fasta"
-	params:
-		"/home/s1098137/output/reference"
-	output:
-		"/home/s1098137/output/reference.1.bt2",
-		"/home/s1098137/output/reference.2.bt2",
-		"/home/s1098137/output/reference.3.bt2",
-		"/home/s1098137/output/reference.4.bt2",
-		"/home/s1098137/output/reference.rev.1.bt2",
-		"/home/s1098137/output/reference.rev.2.bt2"
-	shell: 
-		"bowtie2-build {input} {params}"
+rule qcTrim:
+    input:
+        rules.trim.output
+        #r1 = 'out_trim/{sample}_trimmed_1.fastq',
+        #r2 = 'out_trim/{sample}_trimmed_2.fastq'
+    output:
+        r1 = 'out_qc/{sample}_qctrimmed_1.fastq', 
+        r2 = 'out_qc/{sample}_qctrimmed_2.fastq'
+    shell:
+        './qc.out {input} {output}'
+
+rule bt2build:
+    input:
+        genome = '/home/bnextgen/refgenome/infected_consensus.fasta'
+    params:
+        refgen = 'infconsensus'
+    output:
+        'refgen/infconsensus.1.bt2',
+        'refgen/infconsensus.2.bt2',
+        'refgen/infconsensus.3.bt2',
+        'refgen/infconsensus.4.bt2',
+        'refgen/infconsensus.rev.1.bt2',
+        'refgen/infconsensus.rev.2.bt2'
+    shell:
+        'bowtie2-build {input} refgen/{params.refgen}'
 
 rule bowtie2:
     input:
-        sample=["reads/testbestand1.fastq", "reads/testbestand2.fastq"]
+        rules.bt2build.output,
+        sample=["out_trim/{sample}_trimmed_1.fastq", "out_trim/{sample}_trimmed_2.fastq"]
     output:
-        "mapped/infconsensus.bam"
-    log:
-        "logs/bowtie2/infconsensus.log"
+        'out_bowtie/{sample}.bam'
     params:
-        index="index/genome",  # prefix of reference genome index (built with bowtie2-build)
-        extra=""  # optional parameters
-    threads: 8
+        index='refgen/infconsensus',
+
+        extra=""
     wrapper:
-        "0.27.1/bio/bowtie2/align"
+        '0.30.0/bio/bowtie2/align'
+
+rule samtools_sort:
+    input:
+        rules.bowtie2.output,
+        #"out_bowtie/bngsa_nietinfected.bam"
+    output:
+        "out_bowtie/{sample}.sorted.bam"
+        #"out_bowtie/bngsa_nietinfected.sorted.bam"
+    shell:
+        "samtools sort {input} {output} && mv {output}.bam {output}"
+
+rule samtools_index:
+    input: rules.samtools_sort.output,
+    output: "out_bowtie/{sample}.sorted.bam.bai"
+    params:
+        "" # optional params string
+    wrapper:
+        "0.30.0/bio/samtools/index"
+
+rule refgen_index:
+    input: "/home/bnextgen/refgenome/infected_consensus.fasta"
+    output: "refgen/infected_consensus.fasta.fai"
+    shell: "ln -s /home/bnextgen/refgenome/infected_consensus.fasta refgen/. && samtools faidx refgen/infected_consensus.fasta"
+
+rule samtools_mpileup:
+    input: rules.samtools_sort.output,
+    output: "out_bowtie/{sample}.bcf" # A pileup file
+    shell: "samtools mpileup -uf refgen/infected_consensus.fasta {input} > {output}"
+  
+rule bcf_to_vcf:
+    input:
+        rules.samtools_mpileup.output
+    output:
+        "out_bowtie/{sample}.vcf"
+    shell:
+        "bcftools view -cg {input} > {output}"
+
+rule vcf2fq:
+    input:
+        rules.bcf_to_vcf.output
+    output:
+        "output/{sample}_consensus.fastq"
+    shell:
+        "/usr/share/samtools/vcfutils.pl vcf2fq {input} > {output}"
+
+rule varcount:
+    input:
+        rules.bcf_to_vcf.output
+    output:
+        "result.txt"
+    shell:
+        "sh varcount.sh {input} > {output}"
+
