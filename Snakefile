@@ -1,4 +1,5 @@
-SAMPLES = ['bngsa_nietinfected']
+#SAMPLES = ['bngsa_nietinfected']
+SAMPLES = ['testbestand']
 
 import os
 
@@ -36,8 +37,8 @@ rule all:
 
 rule trim:
     input:
-        r1 = '/home/bnextgen/reads/{sample}_1.fastq',
-        r2 = '/home/bnextgen/reads/{sample}_2.fastq'
+        r1 = 'reads/{sample}_1.fastq',
+        r2 = 'reads/{sample}_2.fastq'
     output:
         r1 = 'out_trim/{sample}_trimmed_1.fastq',
         r2 = 'out_trim/{sample}_trimmed_2.fastq'
@@ -47,8 +48,8 @@ rule trim:
 rule qc:
     input:
         rules.trim.input
-        #r1 = '/home/bnextgen/reads/{sample}_1.fastq',
-        #r2 = '/home/bnextgen/reads/{sample}_2.fastq'
+        #r1 = 'reads/{sample}_1.fastq',
+        #r2 = 'reads/{sample}_2.fastq'
     output:
         r1 = 'out_qc/{sample}_qc_1.fastq', 
         r2 = 'out_qc/{sample}_qc_2.fastq'
@@ -68,7 +69,7 @@ rule qcTrim:
 
 rule bt2build:
     input:
-        genome = '/home/bnextgen/refgenome/infected_consensus.fasta'
+        genome = 'refgen/infected_consensus.fasta'
     params:
         refgen = 'infconsensus'
     output:
@@ -79,7 +80,7 @@ rule bt2build:
         'refgen/infconsensus.rev.1.bt2',
         'refgen/infconsensus.rev.2.bt2'
     shell:
-        'bowtie2-build {input} refgen/{params.refgen}'
+        'bowtie2-build --threads 8 {input} refgen/{params.refgen}'
 
 rule bowtie2:
     input:
@@ -89,10 +90,10 @@ rule bowtie2:
         'out_bowtie/{sample}.bam'
     params:
         index='refgen/infconsensus',
-
         extra=""
+    threads: 8
     wrapper:
-        '0.30.0/bio/bowtie2/align'
+        "0.37.1/bio/bowtie2/align"
 
 rule samtools_sort:
     input:
@@ -102,7 +103,7 @@ rule samtools_sort:
         "out_bowtie/{sample}.sorted.bam"
         #"out_bowtie/bngsa_nietinfected.sorted.bam"
     shell:
-        "samtools sort {input} {output} && mv {output}.bam {output}"
+        "samtools sort -@ 8 {input} {output} && mv {output}.bam {output}"
 
 rule samtools_index:
     input: rules.samtools_sort.output,
@@ -110,12 +111,13 @@ rule samtools_index:
     params:
         "" # optional params string
     wrapper:
-        "0.30.0/bio/samtools/index"
+        "0.37.1/bio/samtools/index"
 
 rule refgen_index:
-    input: "/home/bnextgen/refgenome/infected_consensus.fasta"
+    input: "refgen/infected_consensus.fasta"
     output: "refgen/infected_consensus.fasta.fai"
-    shell: "ln -s /home/bnextgen/refgenome/infected_consensus.fasta refgen/. && samtools faidx refgen/infected_consensus.fasta"
+    # shell: "ln -s /home/bnextgen/refgenome/infected_consensus.fasta refgen/. && samtools faidx refgen/infected_consensus.fasta"
+    shell: "samtools faidx refgen/infected_consensus.fasta"
 
 rule samtools_mpileup:
     input: rules.samtools_sort.output,
