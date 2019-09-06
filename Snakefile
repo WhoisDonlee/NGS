@@ -95,15 +95,26 @@ rule bowtie2:
     wrapper:
         "0.37.1/bio/bowtie2/align"
 
+# rule samtools_sort:
+#     input:
+#         rules.bowtie2.output,
+#         #"out_bowtie/bngsa_nietinfected.bam"
+#     output:
+#         "out_bowtie/{sample}.sorted.bam"
+#         #"out_bowtie/bngsa_nietinfected.sorted.bam"
+#     shell:
+#         "samtools sort -@ 8 {input} {output} && mv {output}.bam {output}"
 rule samtools_sort:
     input:
         rules.bowtie2.output,
-        #"out_bowtie/bngsa_nietinfected.bam"
     output:
         "out_bowtie/{sample}.sorted.bam"
-        #"out_bowtie/bngsa_nietinfected.sorted.bam"
-    shell:
-        "samtools sort -@ 8 {input} {output} && mv {output}.bam {output}"
+    params:
+        "-m 4G"
+    threads:  # Samtools takes additional threads through its option -@
+        8     # This value - 1 will be sent to -@.
+    wrapper:
+        "0.37.1/bio/samtools/sort"
 
 rule samtools_index:
     input: rules.samtools_sort.output,
@@ -130,7 +141,8 @@ rule bcf_to_vcf:
     output:
         "out_bowtie/{sample}.vcf"
     shell:
-        "bcftools view -cg {input} > {output}"
+        # "bcftools view -cg {input} > {output}"
+        "bcftools call -m {input} > {output}"
 
 rule vcf2fq:
     input:
